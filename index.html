@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vínculos con Propósito | Futuros Posibles ITBA 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#050509;--bg:#08060f;--deep:#0d0820;--card:#0f0a1e;--card2:#151027;
+  --border:#251a4b;--dim:#3a3a5a;--muted:#8987a7;--white:#fff;
+  --pink:#ff0080;--violet:#9b5de5;--lav:#c77dff;--teal:#00b4d8;
+  --green:#06d6a0;--amber:#f4a261;--red:#e63946;
+  --serif:"Playfair Display",Georgia,serif;--mono:"DM Mono",monospace;--sans:"DM Sans",system-ui,sans-serif;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);color:var(--white);font-family:var(--sans)}
+body{cursor:none}
+body:before{
+  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+}
+button{font:inherit;color:inherit}
+#particleCanvas{position:fixed;inset:0;z-index:0;background:radial-gradient(circle at 78% 10%,#281456 0,#090611 38%,#050509 75%)}
+#progress{position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--pink),var(--violet),var(--teal));z-index:80;box-shadow:0 0 18px var(--pink);transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.counter{position:fixed;right:2rem;top:1.25rem;z-index:70;font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;color:#ffffff75}
+.counter span{color:var(--pink)}
+.cursor-dot,.cursor-ring{display:none}
+@media(pointer:fine){
+  .cursor-dot,.cursor-ring{display:block;position:fixed;left:0;top:0;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%)}
+  .cursor-dot{width:7px;height:7px;background:var(--pink);box-shadow:0 0 18px var(--pink)}
+  .cursor-ring{width:34px;height:34px;border:1px solid #ff008090;transition:width .18s,height .18s,border-color .18s}
+}
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:58px;z-index:65;background:#050509d8;backdrop-filter:blur(18px);
+  border-right:1px solid var(--border);border-left:3px solid var(--pink);transition:width .35s cubic-bezier(.2,.8,.2,1);overflow:hidden;
+}
+.sidebar:hover,.sidebar.open{width:300px}
+.side-mark{height:4.25rem;display:flex;align-items:center;gap:.8rem;padding:0 1rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;color:var(--pink);white-space:nowrap}
+.hamb{width:23px;display:grid;gap:5px;flex:0 0 auto}
+.hamb i{display:block;height:1px;background:var(--pink);box-shadow:0 0 8px var(--pink)}
+.side-title{opacity:0;transition:opacity .24s}.sidebar:hover .side-title,.sidebar.open .side-title{opacity:1}
+.side-list{list-style:none;padding:.7rem .55rem 1rem}
+.side-list button{
+  width:100%;border:0;background:transparent;display:grid;grid-template-columns:34px 1fr;align-items:center;gap:.55rem;
+  text-align:left;padding:.62rem .42rem;border-radius:6px;color:#ffffff70;cursor:none;transition:background .2s,color .2s;
+}
+.side-list button:hover,.side-list button.active{background:#ffffff0a;color:var(--white)}
+.side-num{font-family:var(--mono);font-size:.62rem;color:var(--pink)}
+.side-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;white-space:nowrap;opacity:0;transition:opacity .24s}
+.sidebar:hover .side-label,.sidebar.open .side-label{opacity:1}
+.slides{position:relative;z-index:5;width:100vw;height:100vh}
+.slide{
+  position:absolute;inset:0;padding:4.45rem 6.2rem 3.9rem 7.4rem;display:grid;align-items:center;opacity:0;visibility:hidden;
+  transform:translateY(26px) scale(.985);transition:opacity .62s cubic-bezier(.2,.8,.2,1),transform .62s cubic-bezier(.2,.8,.2,1),visibility .62s;
+  overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:#ff008055 transparent;
+}
+.slide.active{opacity:1;visibility:visible;transform:translateY(0) scale(1);z-index:2}
+.slide:after{content:"";position:absolute;inset:auto 5% 0 5%;height:1px;background:linear-gradient(90deg,transparent,#ffffff1d,transparent)}
+.bg-image{position:absolute;inset:0;background-size:cover;background-position:center;z-index:-2;filter:saturate(1.2)}
+.shade{position:absolute;inset:0;background:linear-gradient(120deg,#050509f8 25%,#080611d8 58%,#0d082085);z-index:-1}
+.kicker,.tag{
+  display:inline-flex;align-items:center;gap:.45rem;width:max-content;font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--pink);border:1px solid #ff008040;background:#ff00800d;border-radius:999px;padding:.28rem .78rem;margin-bottom:1.2rem;
+}
+.tag:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor;animation:blink 1.5s infinite}
+@keyframes blink{50%{opacity:.25}}
+h1,h2,h3{font-family:var(--serif);line-height:1.02;letter-spacing:0}
+h1{font-size:clamp(4rem,8vw,8.4rem);font-weight:900;max-width:11ch}
+h2{font-size:clamp(2.35rem,4.65vw,5rem);font-weight:900;margin-bottom:.95rem}
+h3{font-size:clamp(1.25rem,2vw,2rem);font-weight:800}
+p{font-size:clamp(.92rem,1.04vw,1.15rem);line-height:1.75;color:#ffffffc8}
+em,.accent{color:var(--pink);font-style:italic}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
+.cover{align-items:end}
+.cover-content{max-width:980px;padding-bottom:2rem}
+.cover h1,.glitch{position:relative;text-shadow:0 0 26px #ff008030}
+.cover h1:before,.cover h1:after,.glitch:before,.glitch:after{content:attr(data-text);position:absolute;left:0;top:0;opacity:0;pointer-events:none}
+.cover h1:before,.glitch:before{color:var(--teal);transform:translate(2px,0)}
+.cover h1:after,.glitch:after{color:var(--pink);transform:translate(-2px,0)}
+.glitch:before{animation:glitch-a 6.4s infinite}
+.glitch:after{animation:glitch-b 6.4s infinite}
+@keyframes glitch-a{0%,92%,100%{opacity:0;clip-path:inset(0)}93%{opacity:.65;clip-path:inset(12% 0 66% 0)}94%{clip-path:inset(48% 0 22% 0)}95%{opacity:0}}
+@keyframes glitch-b{0%,91%,100%{opacity:0;clip-path:inset(0)}92%{opacity:.55;clip-path:inset(70% 0 8% 0)}93.5%{clip-path:inset(22% 0 51% 0)}95%{opacity:0}}
+.typeline{font-size:clamp(1rem,1.6vw,1.35rem);max-width:760px;margin-top:1.3rem;color:#ffffff9c;min-height:3.9rem;font-weight:300}
+.typeline:after{content:"|";color:var(--pink);animation:caret .8s step-end infinite}
+@keyframes caret{50%{opacity:0}}
+.pill-row{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:3.5rem}
+.pill{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;border:1px solid #ffffff25;border-radius:999px;padding:.33rem .8rem;color:#ffffff82;background:#ffffff08}
+.slide-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.2rem;align-items:center}
+.media-panel{position:relative;min-height:60vh;border-radius:8px;overflow:hidden;border:1px solid #ffffff18;background:#000}
+.media-panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.1) contrast(1.05)}
+.media-panel:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#050509e8,#05050910 55%,#05050945)}
+.quote-over{position:absolute;left:2rem;right:2rem;bottom:2rem;z-index:2;font-family:var(--serif);font-size:clamp(1.8rem,3vw,3.4rem);font-style:italic;line-height:1.05;color:#fff;text-shadow:0 18px 40px #000}
+.info-table{border:1px solid var(--border);background:#0f0a1ee8;border-radius:8px;overflow:hidden}
+.row{display:grid;grid-template-columns:34% 1fr;border-bottom:1px solid #ffffff10}
+.row:last-child{border-bottom:0}
+.label{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;color:var(--pink);padding:1rem;background:#ffffff05}
+.value{padding:1rem;color:#ffffffcf;line-height:1.6}
+.highlight{font-family:var(--serif);font-size:1.18rem;color:var(--lav);font-style:italic}
+.section-sub{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--muted);margin-bottom:1.35rem;text-transform:uppercase}
+.peselt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;perspective:1500px}
+.peselt-slide{align-items:start}
+.peselt-slide>div{width:100%}
+.peselt-slide .tag{margin-bottom:.85rem}
+.peselt-slide h2{margin-bottom:.7rem}
+.peselt-slide .section-sub{margin-bottom:1rem}
+.peselt-slide .peselt-grid{height:min(55vh,520px);grid-template-rows:repeat(2,minmax(0,1fr))}
+.peselt-slide .flip{height:auto}
+.flip{height:clamp(200px,24vh,240px);min-height:0;position:relative;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.2,.8,.2,1);cursor:none}
+.flip:hover,.flip.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:8px;border:1px solid #ffffff15;background:linear-gradient(180deg,#151027,#0b0717);backface-visibility:hidden;padding:.95rem;display:flex;flex-direction:column;overflow:hidden}
+.face:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--c)}
+.back{transform:rotateY(180deg);justify-content:center;background:radial-gradient(circle at 20% 0,color-mix(in srgb,var(--c) 20%,transparent),#0b0717 45%)}
+.badge{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--c);color:var(--c);font-family:var(--mono);font-weight:700;box-shadow:0 0 20px color-mix(in srgb,var(--c) 28%,transparent);margin-bottom:.55rem}
+.dim-title{font-family:var(--mono);letter-spacing:.13em;font-size:.72rem;color:#fff;margin-bottom:.62rem}
+.signals{display:grid;gap:.36rem;font-size:.8rem;line-height:1.3;color:#ffffffb5}
+.signals span{color:var(--c);font-family:var(--mono);margin-right:.25rem}
+.back p{font-size:.86rem;line-height:1.5;color:#ffffffe0}
+.matrix-wrap{display:grid;grid-template-columns:70px 1fr;grid-template-rows:1fr 44px;gap:.6rem;max-width:1080px}
+.axis-y{writing-mode:vertical-rl;transform:rotate(180deg);display:grid;place-items:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted)}
+.axis-x{grid-column:2;display:grid;place-items:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted)}
+.matrix{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:.8rem}
+.quad{position:relative;border:1px solid #ffffff15;border-top:2px solid var(--c);background:#0f0a1edc;border-radius:8px;padding:1.25rem;min-height:210px}
+.quad h3{font-family:var(--mono);font-size:.9rem;letter-spacing:.14em;color:var(--c);margin-bottom:.75rem}
+.quad .sub{font-family:var(--mono);font-size:.62rem;color:var(--muted);margin-bottom:.7rem;text-transform:uppercase;letter-spacing:.12em}
+.quad li{margin-left:1rem;color:#ffffffc9;line-height:1.55;margin-bottom:.35rem}
+.scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.scenario{border:1px solid #ffffff14;border-top:2px solid var(--c);background:linear-gradient(180deg,#151027,#090611);border-radius:8px;padding:1.35rem;min-height:250px}
+.scenario-num{font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;color:var(--c);margin-bottom:.7rem}
+.scenario h3{margin-bottom:.35rem}.scenario h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;color:#ffffff75;margin-bottom:.8rem}
+.scenario p{font-size:.94rem;line-height:1.62}
+.pillars{display:grid;gap:.85rem}
+.yearmark{font-family:var(--serif);font-size:clamp(6rem,14vw,13rem);font-weight:900;line-height:.8;color:#ffffff08;margin-bottom:1rem}
+.pillar{display:grid;grid-template-columns:46px 1fr;gap:.8rem;align-items:start;border:1px solid #ffffff12;border-left:2px solid var(--c);background:#ffffff06;border-radius:8px;padding:1rem}
+.pillar-icon{font-size:1.4rem}.pillar b{display:block;color:#fff;margin-bottom:.25rem}.pillar small{color:#ffffff9a;line-height:1.45}
+.quote-box{border-left:3px solid var(--violet);background:#9b5de512;padding:1.15rem 1.25rem;margin-top:1.4rem;border-radius:0 8px 8px 0}
+.quote-box p{font-family:var(--serif);font-style:italic;color:#ffffffe0}.quote-box .by{font-family:var(--mono);font-size:.65rem;letter-spacing:.14em;color:var(--lav);margin-top:.8rem}
+.artifact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.artifact{border:1px solid #ffffff14;border-top:2px solid var(--c);background:#0f0a1ee2;border-radius:8px;overflow:hidden;min-height:560px;display:flex;flex-direction:column}
+.artifact.featured{box-shadow:0 0 36px #ff00802e;border-color:#ff008060}
+.artifact.strong{box-shadow:0 0 50px #ff008040;border-color:#ff008090}
+.art-img{height:210px;position:relative;overflow:hidden;background:#111}
+.art-img img{width:100%;height:100%;object-fit:cover;filter:saturate(1.1) contrast(1.05)}
+.art-img.img-failed:before{content:"";position:absolute;inset:18%;border:1px solid #ff008070;border-radius:24px;box-shadow:0 0 40px #ff008030}
+.art-img.img-failed:after{content:"FILTRO · UI 2036";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;color:var(--pink)}
+.art-body{padding:1.2rem}.art-body h3{font-size:1.45rem;margin-bottom:.9rem}.art-body p{font-size:.98rem}
+.art-num{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--c);margin-bottom:.6rem}
+.layers{display:grid;gap:.8rem}
+.layer{border:1px solid #ffffff14;border-left:3px solid var(--c);background:#ffffff07;border-radius:8px;padding:1rem}
+.layer .num{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--c);margin-bottom:.45rem}.layer h3{font-size:1.25rem;margin-bottom:.5rem}.layer p{font-size:.92rem;line-height:1.58}
+.phone-stage{position:relative;min-height:650px;display:grid;place-items:center}
+.ring{position:absolute;border-radius:50%;border:1px solid #ff00805c;box-shadow:0 0 30px #ff008020;animation:spin 4s linear infinite}
+.r1{width:520px;height:520px}.r2{width:420px;height:420px;border-color:#00b4d85a;animation-duration:2.5s;animation-direction:reverse}.r3{width:318px;height:318px;border-color:#06d6a06b;animation-duration:1.8s}
+.ring:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:currentColor;top:18%;left:12%;box-shadow:0 0 14px currentColor;color:var(--pink)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.phone{position:relative;width:310px;height:610px;border-radius:38px;background:linear-gradient(180deg,#18142a,#050509);border:1px solid #ffffff35;box-shadow:0 30px 80px #000,0 0 70px #ff00802b;padding:1.15rem;z-index:2}
+.phone:before{content:"";position:absolute;top:12px;left:50%;transform:translateX(-50%);width:92px;height:20px;background:#050509;border-radius:999px}
+.app{height:100%;border-radius:28px;background:#090611;border:1px solid #ffffff12;padding:2.2rem 1rem 1rem;display:flex;flex-direction:column}
+.app-title{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;color:var(--lav);line-height:1.4;margin-bottom:1rem}
+.status{display:flex;justify-content:space-between;gap:.6rem;align-items:center;border-bottom:1px solid #ffffff12;padding:.72rem 0;font-size:.85rem}
+.bad{font-family:var(--mono);font-size:.62rem;color:var(--red)}.good{font-family:var(--mono);font-size:.62rem;color:var(--green)}
+.cta{margin:1.2rem 0 .7rem;border:0;border-radius:8px;background:var(--green);color:#04110e;font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.08em;padding:.85rem;box-shadow:0 0 25px #06d6a040}
+.gps{font-size:.74rem;line-height:1.4;color:#ffffff7f;text-align:center}
+.heartbeat{margin-top:auto;height:80px;display:flex;align-items:end;gap:6px;justify-content:center}
+.heartbeat i{display:block;width:7px;background:var(--pink);border-radius:5px;box-shadow:0 0 13px var(--pink);animation:beat 1.2s ease-in-out infinite;animation-delay:calc(var(--i)*.07s)}
+.heartbeat i:nth-child(1){height:22px}.heartbeat i:nth-child(2){height:36px}.heartbeat i:nth-child(3){height:18px}.heartbeat i:nth-child(4){height:58px}.heartbeat i:nth-child(5){height:28px}.heartbeat i:nth-child(6){height:68px}.heartbeat i:nth-child(7){height:24px}.heartbeat i:nth-child(8){height:44px}.heartbeat i:nth-child(9){height:30px}.heartbeat i:nth-child(10){height:52px}.heartbeat i:nth-child(11){height:20px}.heartbeat i:nth-child(12){height:34px}
+@keyframes beat{0%,100%{transform:scaleY(.55);opacity:.52}35%{transform:scaleY(1);opacity:1}55%{transform:scaleY(.7)}}
+.feature-card{border:1px solid #ffffff15;border-top:2px solid var(--teal);background:#0f0a1ee5;border-radius:8px;padding:1.5rem;margin-bottom:1.1rem}
+.meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.meta-card{border:1px solid #ffffff14;border-top:2px solid var(--c);background:#ffffff07;border-radius:8px;padding:1.05rem;min-height:156px}
+.meta-icon{font-size:1.55rem;margin-bottom:.55rem}.meta-card h3{font-family:var(--mono);font-size:.76rem;letter-spacing:.14em;color:var(--c);margin-bottom:.4rem}.meta-card p{font-size:.9rem;line-height:1.5}
+.timeline{display:grid;gap:.8rem}
+.tl{border:1px solid #ffffff14;border-left:3px solid var(--c);background:#ffffff07;border-radius:8px;padding:1rem}
+.tl-time{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--c);margin-bottom:.35rem}.tl h3{font-size:1.2rem;margin-bottom:.45rem}.tl p{font-size:.9rem;line-height:1.5}
+.close-slide{text-align:center;overflow:hidden}
+.close-glow{position:absolute;border-radius:50%;filter:blur(8px);opacity:.28;pointer-events:none}
+.g1{width:40vw;height:40vw;background:radial-gradient(circle,var(--pink),transparent 65%);left:-14vw;top:-12vw}.g2{width:34vw;height:34vw;background:radial-gradient(circle,var(--violet),transparent 66%);right:-10vw;bottom:-10vw}
+.close-title{max-width:none;font-size:clamp(3rem,6vw,7rem);margin:0 auto 1.1rem}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;max-width:1040px;margin:2rem auto 0}
+.check{border:1px solid #ffffff14;background:#ffffff07;border-radius:8px;padding:.85rem;text-align:left}.check b{display:block;color:#fff}.check span{display:block;color:var(--muted);font-size:.82rem;margin-top:.2rem}
+.check:before{content:"✓";color:var(--green);font-family:var(--mono);margin-right:.5rem}
+.dots{position:fixed;left:50%;bottom:1.55rem;transform:translateX(-50%);display:flex;gap:.45rem;z-index:70}
+.dot{width:8px;height:8px;border-radius:999px;border:0;background:#ffffff30;transition:width .25s,background .25s;cursor:none}
+.dot.active{width:28px;background:var(--pink);box-shadow:0 0 16px var(--pink)}
+.nav-btn{position:fixed;right:2rem;bottom:1.2rem;z-index:70;display:flex;gap:.55rem}
+.nav-btn button{width:38px;height:38px;border-radius:50%;border:1px solid #ffffff20;background:#050509aa;color:#fff;cursor:none}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}.active .reveal.visible,.active .reveal.in{opacity:1;transform:translateY(0)}
+@media(max-width:1050px){
+  .slide{padding:5rem 2rem 4.5rem 4.5rem;overflow-y:auto;align-items:start}.slide-grid{grid-template-columns:1fr;gap:1.4rem}.peselt-grid,.artifact-grid,.meta-grid{grid-template-columns:1fr 1fr}.phone-stage{min-height:560px}.r1{width:430px;height:430px}.r2{width:340px;height:340px}.r3{width:260px;height:260px}
+}
+@media(max-height:860px) and (min-width:721px){
+  .slide{padding:3rem 4.8rem 3.25rem 6.2rem}
+  .tag{font-size:.56rem;padding:.22rem .66rem;margin-bottom:.75rem}
+  h2{font-size:clamp(2rem,4vw,4rem);margin-bottom:.7rem}
+  h3{font-size:clamp(1.08rem,1.6vw,1.55rem)}
+  p{font-size:clamp(.82rem,.9vw,1rem);line-height:1.55}
+  .section-sub{font-size:.62rem;margin-bottom:.85rem}
+  .peselt-slide .peselt-grid{height:calc(100vh - 250px);gap:.72rem}
+  .peselt-slide .face{padding:.78rem}
+  .peselt-slide .badge{width:34px;height:34px;margin-bottom:.45rem}
+  .peselt-slide .dim-title{font-size:.66rem;margin-bottom:.48rem}
+  .peselt-slide .signals{font-size:.72rem;line-height:1.22;gap:.28rem}
+  .peselt-slide .back p{font-size:.76rem;line-height:1.38}
+  .artifact-grid{gap:.75rem}
+  .artifact{min-height:0;height:calc(100vh - 260px)}
+  .art-img{height:145px}
+  .art-body{padding:.9rem}
+  .art-body h3{font-size:1.15rem;margin-bottom:.55rem;line-height:1.12}
+  .art-body p{font-size:.82rem;line-height:1.42}
+  .art-num{font-size:.55rem;margin-bottom:.45rem}
+  .phone-stage{min-height:0;height:calc(100vh - 220px)}
+  .phone{transform:scale(.78)}
+  .layers{gap:.55rem}
+  .layer{padding:.72rem}
+  .layer .num{font-size:.54rem;margin-bottom:.28rem}
+  .layer h3{font-size:1rem;margin-bottom:.28rem}
+  .layer p{font-size:.78rem;line-height:1.38}
+  .close-title{font-size:clamp(2.4rem,4.8vw,5.2rem);margin-bottom:.75rem}
+  .summary-grid{gap:.5rem;margin-top:1.1rem;max-width:980px}
+  .check{padding:.62rem}
+  .check b{font-size:.86rem}
+  .check span{font-size:.72rem}
+  .dots{bottom:.85rem}
+  .nav-btn{bottom:.6rem}
+}
+@media(max-height:730px) and (min-width:721px){
+  .slide{padding:2.2rem 4.2rem 2.8rem 5.8rem}
+  h2{font-size:clamp(1.85rem,3.4vw,3.35rem)}
+  .peselt-slide .peselt-grid{height:calc(100vh - 205px);gap:.6rem}
+  .peselt-slide .tag{margin-bottom:.55rem}
+  .peselt-slide h2{margin-bottom:.42rem}
+  .peselt-slide .section-sub{margin-bottom:.62rem}
+  .peselt-slide .signals{font-size:.68rem}
+  .artifact{height:calc(100vh - 215px)}
+  .art-img{height:120px}
+  .art-body p{font-size:.76rem;line-height:1.35}
+  .phone{transform:scale(.7)}
+  .phone-stage{height:calc(100vh - 190px)}
+  .layer p{font-size:.72rem;line-height:1.3}
+  .close-title{font-size:clamp(2rem,4vw,4.4rem)}
+  .summary-grid{grid-template-columns:repeat(3,1fr);gap:.42rem;margin-top:.8rem}
+  .check{padding:.48rem}
+}
+@media(max-width:720px){
+  body{cursor:auto}.sidebar{width:46px}.sidebar:hover,.sidebar.open{width:255px}.slide{padding:4.7rem 1.1rem 4.3rem 3.55rem}.counter{right:1rem;top:1rem}.tag{width:auto;max-width:calc(100vw - 5rem);white-space:normal;line-height:1.45;overflow-wrap:anywhere}.cover-content{max-width:100%}.peselt-grid,.scenario-grid,.artifact-grid,.meta-grid,.summary-grid{grid-template-columns:1fr}.media-panel{min-height:360px}.row{grid-template-columns:1fr}.matrix-wrap{grid-template-columns:1fr;grid-template-rows:auto}.axis-y,.axis-x{display:none}.matrix{grid-template-columns:1fr}.phone{transform:scale(.86)}.phone-stage{min-height:520px}.r1{width:350px;height:350px}.r2{width:285px;height:285px}.r3{width:220px;height:220px}.nav-btn{display:none}.dots{bottom:.8rem}h1{font-size:3.08rem;max-width:calc(100vw - 5rem)}.cover h1{max-width:calc(100vw - 5rem)}.typeline{min-height:5.6rem}
+}
+</style>
+</head>
+<body>
+<canvas id="particleCanvas" aria-hidden="true"></canvas>
+<div id="progress"></div>
+<div class="cursor-dot" aria-hidden="true"></div><div class="cursor-ring" aria-hidden="true"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="side-mark"><span class="hamb"><i></i><i></i><i></i></span><span class="side-title">VINCULOS · 2036</span></div>
+  <ol class="side-list" id="sideList"></ol>
+</aside>
+<div class="counter"><span id="current">01</span> / 11</div>
+<main class="slides" id="slides">
+  <section class="slide cover active" data-title="Cover">
+    <div class="bg-image" style="background-image:url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1600&q=80')"></div><div class="shade"></div>
+    <div class="cover-content">
+      <div class="tag reveal in">SAT · MATERIA FUTUROS POSIBLES · ITBA 2026</div>
+      <h1 class="glitch reveal in" data-text="Vínculos con Propósito">Vínculos con <em>Propósito</em></h1>
+      <p class="typeline" id="typewriter"></p>
+      <div class="pill-row reveal in"><span class="pill">PENSAR</span><span class="pill">IMAGINAR</span><span class="pill">CO-CREAR</span></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="El Desafío">
+    <div class="slide-grid">
+      <div class="media-panel reveal"><img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=1200&q=80" alt=""><div class="quote-over">¿La tecnología nos acerca o nos deja más solos que nunca?</div></div>
+      <div class="reveal">
+        <div class="tag">PASO 1 · ELECCIÓN DEL DESAFÍO</div><h2>El Desafío</h2>
+        <div class="info-table">
+          <div class="row"><div class="label">TEMA</div><div class="value">Nuevas relaciones y citas en el marco de la tecnología</div></div>
+          <div class="row"><div class="label">HORIZONTE</div><div class="value">2036 — 10 años (largo plazo)</div></div>
+          <div class="row"><div class="label">GEOGRAFÍA</div><div class="value">Mundial</div></div>
+          <div class="row"><div class="label">PREGUNTA ORIENTADORA</div><div class="value highlight">¿Cómo serán los nuevos vínculos y citas al 2036 en el mundo tecnológico en el que vivimos?</div></div>
+          <div class="row"><div class="label">OBJETIVO</div><div class="value">Interpretar cómo la tecnología va a impactar en los nuevos vínculos</div></div>
+          <div class="row"><div class="label">DESAFÍOS GLOBALES</div><div class="value">Salud y bienestar</div></div>
+          <div class="row"><div class="label">PROPÓSITO</div><div class="value">Identificar el impacto a nivel tecnológico y a nivel humano en los nuevos vínculos afectivos</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide peselt-slide" data-title="Radar PESELT">
+    <div>
+      <div class="tag reveal">PASO 2 · PENSAR · Inteligencia de futuros</div><h2 class="reveal">Radar <em>PESELT</em></h2>
+      <div class="section-sub reveal">hover o tap para ver el detalle de cada dimensión →</div>
+      <div class="peselt-grid reveal">
+        <article class="flip" style="--c:#9B5DE5"><div class="face"><div class="badge">P</div><div class="dim-title">POLÍTICO</div><div class="signals"><div><span>●</span>Monitoreo estatal de apps de citas</div><div><span>◆</span>Polarización ideológica de las aplicaciones de citas</div><div><span>▸</span>Leyes para nuevas formas de pareja y convivencia</div></div></div><div class="face back"><p>Los gobiernos ya revisan datos de las plataformas para monitorear comportamientos sociales. La tendencia es la identidad digital obligatoria. Ya hay movimientos que exigen volver a conocer gente sin que un algoritmo decida.</p></div></article>
+        <article class="flip" style="--c:#FF0080"><div class="face"><div class="badge">E</div><div class="dim-title">ECONÓMICO</div><div class="signals"><div><span>●</span>Costo de vida: parejas separadas por economía</div><div><span>◆</span>Estabilidad económica antes de comprometerse</div><div><span>▸</span>Se retrasa independizarse, emparejarse o formar familia</div></div></div><div class="face back"><p>Las ciudades hacen imposible que una pareja viva junta sin una sólida base económica previa. El compromiso romántico se convierte en un lujo del que se puede prescindir hasta "estar listo". El amor se planifica como una inversión.</p></div></article>
+        <article class="flip" style="--c:#00B4D8"><div class="face"><div class="badge">S</div><div class="dim-title">SOCIAL</div><div class="signals"><div><span>●</span>Casarse más tarde, menos hijos, más tiempo a solas</div><div><span>◆</span>El celular en todos los momentos del vínculo</div><div><span>▸</span>Soltería asistida por IA como sostén emocional</div></div></div><div class="face back"><p>La soltería prolongada es la nueva norma estadística. El teléfono funciona como intermediario y sostén de pareja permanente. La IA ya ocupa el rol de confidente, consejero y compañía que antes tenían los vínculos humanos.</p></div></article>
+        <article class="flip" style="--c:#06D6A0"><div class="face"><div class="badge">T</div><div class="dim-title">TECNOLÓGICO</div><div class="signals"><div><span>●</span>Relaciones creadas y vividas en la web</div><div><span>◆</span>Teléfono como intermediario y sostén de pareja</div><div><span>▸</span>Personas que buscan personas parecidas</div></div></div><div class="face back"><p>Los vínculos puramente digitales con entidades no humanas ya son una realidad. Los algoritmos empujan hacia la homogeneización del círculo afectivo: conocemos cada vez más a personas idénticas a nosotros y menos al que es distinto.</p></div></article>
+        <article class="flip" style="--c:#F4A261"><div class="face"><div class="badge">E</div><div class="dim-title">ECOLÓGICO</div><div class="signals"><div><span>●</span>Migraciones climáticas crean nuevos contextos</div><div><span>◆</span>Parejas que comparten valores de vida</div><div><span>▸</span>Comunidades intencionales y proyectos compartidos</div></div></div><div class="face back"><p>El desplazamiento forzado por el clima crea nuevas comunidades mezcladas. La compatibilidad ambiental se suma a los criterios de matcheo. Los vínculos se anclan en un propósito colectivo más amplio que la atracción individual.</p></div></article>
+        <article class="flip" style="--c:#E63946"><div class="face"><div class="badge">L</div><div class="dim-title">LEGAL</div><div class="signals"><div><span>●</span>Transparencia para perfiles creados por IA</div><div><span>◆</span>Validar identidad con documento en apps de citas</div><div><span>▸</span>Leyes para nuevas formas de pareja y convivencia</div></div></div><div class="face back"><p>Se exige que las plataformas indiquen cuando un perfil fue generado por IA. La autenticación se vuelve requisito legal. Los marcos jurídicos evolucionan para reconocer uniones no tradicionales e incluso relaciones asistidas digitalmente.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Matriz Impacto-Riesgo">
+    <div>
+      <div class="tag reveal">PASO 2 · PENSAR · Probabilidades de ocurrencia</div><h2 class="reveal">Matriz <em>Impacto-Riesgo</em></h2>
+      <div class="matrix-wrap reveal"><div class="axis-y">IMPACTO</div><div class="matrix">
+        <div class="quad" style="--c:#9B5DE5"><h3>⚡ DISRUPTIVO</h3><div class="sub">Impacto alto / Probabilidad baja</div><ul><li>Polarización ideológica de las apps</li><li>Casamiento legal con una IA</li></ul></div>
+        <div class="quad" style="--c:#FF0080"><h3>🔥 ESENCIAL</h3><div class="sub">Impacto alto / Probabilidad alta</div><ul><li>Soledad acompañada por tecnología: realidad estructural</li><li>Te cobran por cada momento de atención</li><li>Los algoritmos predicen el deseo y el matcheo</li></ul></div>
+        <div class="quad" style="--c:#3A3A5A"><h3>· IGNORAR</h3><div class="sub">Impacto bajo / Probabilidad baja</div><ul><li>Valores ambientales compartidos como criterio principal de búsqueda</li></ul></div>
+        <div class="quad" style="--c:#00B4D8"><h3>🛰 SATÉLITE</h3><div class="sub">Para tener en cuenta, no es el motor</div><ul><li>Citas virtuales por ecología</li><li>Comunidades intencionales basadas en valores compartidos</li><li>Regulación de apps y validación de identidad</li></ul></div>
+      </div><div class="axis-x">PROBABILIDAD</div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="4 Escenarios">
+    <div>
+      <div class="tag reveal">PASO 3 · IMAGINAR · Método Peter Schwartz</div><h2 class="reveal">4 Escenarios <em>de Futuro</em></h2>
+      <div class="scenario-grid reveal">
+        <article class="scenario" style="--c:#9B5DE5"><div class="scenario-num">01 · BUSINESS AS USUAL</div><h3>Las Tendencias se Profundizan</h3><h4>Continuidad algorítmica</h4><p>Las tendencias actuales se profundizan sin grandes cambios. Las personas postergan el compromiso por razones económicas, viven solas por más tiempo y el celular se posiciona como el medio de cada etapa del vínculo afectivo. Las citas siguen existiendo, pero son más breves, menos comprometidas y filtradas por algoritmos que emparejan a personas similares.</p></article>
+        <article class="scenario" style="--c:#00B4D8"><div class="scenario-num">02 · EL MEJOR DE LOS CASOS</div><h3>Vínculos con Propósito</h3><h4>La tecnología como puente</h4><p>La tecnología se convierte en puente y no en sustituto. Las leyes reconocen nuevas formas de pareja. Una mejora económica permite elegir cuándo y cómo comprometerse. La modalidad presencial vuelve a estar de moda y las citas recuperan profundidad. La tecnología facilita el primer contacto, pero las personas eligen cara a cara.</p></article>
+        <article class="scenario" style="--c:#FF0080"><div class="scenario-num">03 · EL ATÍPICO</div><h3>El Estado Interviene</h3><h4>Política pública del encuentro</h4><p>La soledad es la nueva normalidad. Los Estados intervienen de manera activa: diseñan políticas públicas de vinculación, crean espacios de encuentro presencial y regulan el uso de la IA como soporte emocional. El Estado pasa a ser actor central en la mediación del encuentro afectivo.</p></article>
+        <article class="scenario" style="--c:#E63946"><div class="scenario-num">04 · EL PEOR DE LOS CASOS</div><h3>La Grieta Algorítmica</h3><h4>Intimidad moldeada por software</h4><p>La tecnología se vuelve el principal actor de las relaciones. Los algoritmos generan burbujas donde únicamente se conoce gente con perfiles idénticos. Nadie habla de soledad porque todos están conectados virtualmente. El vínculo auténtico se transforma en algo vintage que ya no existe.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Futuro Deseado">
+    <div class="slide-grid">
+      <div class="reveal"><div class="yearmark">2036</div><div class="pillars">
+        <div class="pillar" style="--c:#9B5DE5"><div class="pillar-icon">🔒</div><div><b>Identidad verificada por ley</b><small>Validación biométrica obligatoria en todas las plataformas</small></div></div>
+        <div class="pillar" style="--c:#00B4D8"><div class="pillar-icon">🔄</div><div><b>Algoritmos con incentivos sanos</b><small>Las apps premian el encuentro físico, no el tiempo en pantalla</small></div></div>
+        <div class="pillar" style="--c:#06D6A0"><div class="pillar-icon">🤝</div><div><b>Presencialidad como meta</b><small>La tecnología es el puente, el cara a cara es el destino</small></div></div>
+        <div class="pillar" style="--c:#F4A261"><div class="pillar-icon">🌱</div><div><b>Vínculos desde valores comunes</b><small>Compatibilidad en proyectos de vida, no solo en fotos</small></div></div>
+      </div></div>
+      <div class="reveal"><div class="tag">PASO 4 · IMAGINACIÓN · Futuro Deseado</div><h2>Vínculos con <em>Propósito</em></h2><p>En 2036, el mundo de las relaciones evoluciona hacia un ecosistema seguro, transparente y totalmente humano. Gracias a la validación obligatoria de identidad digital, se eliminan los perfiles falsos. Las plataformas cambiaron su diseño de incentivos: los algoritmos ya no buscan retener al usuario pegado a la pantalla, sino que premian a quienes trasladan la charla virtual al plano físico.</p><div class="quote-box"><p>Es mayo de 2036. El usuario abre su app de vínculos, que exige validación biométrica obligatoria por ley. Los algoritmos ya no usan scrolling infinito para retenerte, sino dinámicas de desconexión programada que premian con mayor visibilidad a quienes trasladan la charla al plano físico en menos de una semana. A la tarde, va a una cita presencial en un espacio cultural.</p><div class="by">— VISIÓN COLECTIVA · 2036</div></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Artefactos">
+    <div>
+      <div class="tag reveal">PASO 5 · CO-CREAR · Identificación de artefactos</div><h2 class="reveal">Artefactos de <em>Futuro · 2036</em></h2>
+      <div class="artifact-grid reveal">
+        <article class="artifact" style="--c:#9B5DE5"><div class="art-img"><img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=80" alt=""></div><div class="art-body"><div class="art-num">ARTEFACTO 01</div><h3>Credencial de Identidad Humana</h3><p>Filtro global que certifica que la persona con la que interactuás en cualquier entorno digital es real, frenando la suplantación de identidad. Para 2036 es el documento base del ecosistema de vínculos digitales.</p></div></article>
+        <article class="artifact featured" style="--c:#FF0080"><div class="art-img"><img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80" alt=""></div><div class="art-body"><div class="art-num">ARTEFACTO 02 · FEATURED ★</div><h3>Dispositivos de Presencia Háptica</h3><p>Wearables que permiten registrar y transmitir estímulos físicos reales, como pulso o temperatura corporal, para acortar distancias en vínculos remotos. Le devuelven al vínculo digital aquello que ninguna videollamada puede reemplazar.</p></div></article>
+        <article class="artifact strong" style="--c:#FF0080"><div class="art-img"><img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&q=80" alt="Interfaz móvil abstracta" onerror="this.parentElement.classList.add('img-failed');this.remove();"></div><div class="art-body"><div class="art-num">PROTOTIPO DIEGÉTICO ★</div><h3>Filtro de Comunicación Progresiva</h3><p>App que limita fotos, videos y chats multimedia, liberando funciones únicamente a medida que los usuarios agendan y validan encuentros presenciales mediante GPS. La tecnología dosifica la virtualidad para forzar el cara a cara.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Prototipo Diegético">
+    <div class="slide-grid">
+      <div class="reveal"><div class="tag">CO-CREAR · Desarrollo del prototipo diegético</div><h2>💬 Filtro de Comunicación <em>Progresiva</em></h2><div class="layers">
+        <div class="layer" style="--c:#9B5DE5"><div class="num">01 · REALIDAD</div><h3>Los componentes técnicos</h3><p>Apps de mensajería con fotos temporales de un solo uso. Sistemas de geolocalización GPS que validan cercanía física entre dos dispositivos por más de 30 minutos. La única forma de liberar audios, videollamadas y archivos es que el GPS registre un encuentro presencial.</p></div>
+        <div class="layer" style="--c:#00B4D8"><div class="num">02 · NARRATIVA</div><h3>Mateo y Sofía, mayo de 2036</h3><p>Mateo abre la app para hablar con Sofía. La interfaz solo le permite texto básico y la foto de perfil de ella se ve borrosa. El sistema emite una notificación: la única forma de desbloquear multimedia es compartir un encuentro presencial de más de treinta minutos.</p></div>
+        <div class="layer" style="--c:#FF0080"><div class="num">03 · PROVOCACIÓN</div><h3>¿Cuida la autenticidad o manipula?</h3><p>¿Es seguro obligar a las personas a encontrarse físicamente? ¿Qué pasa con los vínculos a larga distancia si la tecnología penaliza la comunicación virtual? ¿Este filtro cuida la autenticidad o manipula la ansiedad humana?</p></div>
+      </div></div>
+      <div class="phone-stage reveal"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="phone"><div class="app"><div class="app-title">FILTRO DE COMUNICACIÓN PROGRESIVA</div><div class="status"><span>📷 Fotos</span><b class="bad">BLOQUEADO</b></div><div class="status"><span>🎤 Audio</span><b class="bad">BLOQUEADO</b></div><div class="status"><span>📹 Video</span><b class="bad">BLOQUEADO</b></div><div class="status"><span>✉ Texto básico</span><b class="good">✓ HABILITADO</b></div><button class="cta">AGENDAR ENCUENTRO PRESENCIAL</button><div class="gps">GPS detecta proximidad física +30 min para desbloquear</div><div class="heartbeat"><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i><i style="--i:12"></i></div></div></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Diseño del Taller">
+    <div>
+      <div class="tag reveal">PRESENTACIÓN DEL WORKSHOP</div><h2 class="reveal">Ficha de <em>la sesión</em></h2>
+      <div class="feature-card reveal"><h3>Vínculos con Propósito: Escenarios y Dilemas de los Vínculos Tecnológicos al 2036</h3><p>El taller convoca a dieciocho especialistas de tres áreas distintas para someter el Filtro de Comunicación Progresiva a un debate real, con preguntas incómodas y sin respuestas fáciles.</p></div>
+      <div class="meta-grid reveal">
+        <div class="meta-card" style="--c:#9B5DE5"><div class="meta-icon">🎯</div><h3>OBJETIVO</h3><p>Debatir los escenarios posibles del amor en 2036 y analizar críticamente el artefacto diseñado por el grupo.</p></div>
+        <div class="meta-card" style="--c:#00B4D8"><div class="meta-icon">❓</div><h3>PREGUNTA ORIENTADORA</h3><p>¿Cómo serán los nuevos vínculos y citas al 2036 en el mundo tecnológico en el que vivimos?</p></div>
+        <div class="meta-card" style="--c:#FF0080"><div class="meta-icon">👥</div><h3>PARTICIPANTES</h3><p>18 expertos: 6 desarrolladores/UX · 6 sociólogos y psicólogos · 6 especialistas en derecho informático.</p></div>
+        <div class="meta-card" style="--c:#06D6A0"><div class="meta-icon">📍</div><h3>FECHA Y FORMATO</h3><p>Virtual sincrónico · Zoom + Mural colaborativo · Duración: 3 horas.</p></div>
+        <div class="meta-card" style="--c:#F4A261"><div class="meta-icon">🎙</div><h3>ORADOR INVITADO</h3><p>Investigador en bienestar digital y soledad: aporta evidencia empírica y cierra con una pregunta abierta.</p></div>
+        <div class="meta-card" style="--c:#E63946"><div class="meta-icon">📜</div><h3>OUTPUT ESPERADO</h3><p>Propuestas de objetos de futuro que podrían afectar las relaciones: alertas, artefacto rediseñado y compromisos por perfil.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Dinámica del Taller">
+    <div class="slide-grid">
+      <div class="reveal"><div class="tag">WORKSHOP · ESTRUCTURA DE LA SESIÓN</div><h2>Lo que vamos a <em>construir juntos</em></h2><p class="section-sub">Virtual sincrónico · Zoom + Mural colaborativo · 3 horas</p><p>Cada equipo va a presentar una propuesta de artefacto: un objeto o situación de futuro que podría afectar las relaciones y citas en el futuro.</p><p class="muted">La propuesta debe mostrar tres puntos: alertas, artefacto rediseñado y compromisos por perfil.</p></div>
+      <div class="timeline reveal">
+        <div class="tl" style="--c:#9B5DE5"><div class="tl-time">BLOQUE 1 · 30 MIN</div><h3>🎬 Encuadre y presentación del orador</h3><p>El facilitador presenta el radar de señales, los cuatro escenarios y el artefacto. A continuación, el orador invitado presenta su perspectiva y cierra con una pregunta abierta.</p></div>
+        <div class="tl" style="--c:#00B4D8"><div class="tl-time">BLOQUE 2 · 45 MIN</div><h3>🌐 Reflexión en grupos pequeños</h3><p>Tres salas de seis personas. Consigna: ¿cuál de los cuatro escenarios les parece más peligroso para la salud vincular de la sociedad?</p></div>
+        <div class="tl" style="--c:#FF0080"><div class="tl-time">BLOQUE 3 · 60 MIN</div><h3>🛠 Debate del artefacto</h3><p>Paso 1: empatía, imaginarse usuarios del Filtro en 2036. Paso 2: intervención, rediseñar una función sin sacrificar la libertad de comunicación.</p></div>
+        <div class="tl" style="--c:#06D6A0"><div class="tl-time">BLOQUE 4 · 45 MIN</div><h3>🎯 Lo que vamos a construir juntos</h3><p>Cada equipo presenta una propuesta de artefacto. A. Las alertas: riesgos técnicos, de comportamiento y jurídicos. B. El artefacto rediseñado: funciones, utilidades y beneficios. C. Los compromisos por perfil: qué cambia esta semana.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide close-slide" data-title="Cierre">
+    <div class="close-glow g1"></div><div class="close-glow g2"></div>
+    <div class="reveal"><div class="tag" style="margin-inline:auto">FIN DEL TRABAJO · PIC FUTUROS · ITBA 2026</div><h2 class="close-title glitch" data-text="El futuro no está definido. Lo construimos nosotros.">El futuro no está definido.<br><em>Lo construimos nosotros.</em></h2>
+      <div class="summary-grid"><div class="check"><b>Desafío identificado</b><span>Nuevas relaciones y citas · 2036</span></div><div class="check"><b>Radar PESELT</b><span>6 dimensiones completas</span></div><div class="check"><b>Matriz Impacto-Riesgo</b><span>5 categorías</span></div><div class="check"><b>4 Escenarios</b><span>Método Peter Schwartz</span></div><div class="check"><b>Futuro deseado</b><span>Vínculos con Propósito</span></div><div class="check"><b>3 Artefactos de futuro</b><span>Credencial · Háptica · Filtro</span></div><div class="check"><b>Prototipo diegético</b><span>Filtro de Comunicación Progresiva</span></div><div class="check"><b>Workshop diseñado</b><span>Estructura de la sesión</span></div><div class="check"><b>Lo que construimos juntos</b><span>Alertas · artefacto · compromisos</span></div></div>
+    </div>
+  </section>
+</main>
+<div class="dots" id="dots"></div>
+<div class="nav-btn"><button id="prev" aria-label="Anterior">←</button><button id="next" aria-label="Siguiente">→</button></div>
+<script>
+const slides=[...document.querySelectorAll(".slide")],dots=document.getElementById("dots"),sideList=document.getElementById("sideList"),progress=document.getElementById("progress"),current=document.getElementById("current"),sidebar=document.getElementById("sidebar");let index=0,touchStart=0;
+slides.forEach((s,i)=>{const d=document.createElement("button");d.className="dot"+(i===0?" active":"");d.setAttribute("aria-label","Ir a slide "+(i+1));d.onclick=()=>go(i);dots.appendChild(d);const li=document.createElement("li"),b=document.createElement("button");b.innerHTML=`<span class="side-num">${String(i+1).padStart(2,"0")}</span><span class="side-label">${s.dataset.title}</span>`;b.onclick=()=>go(i);if(i===0)b.classList.add("active");li.appendChild(b);sideList.appendChild(li)});
+const dotBtns=[...dots.children],sideBtns=[...sideList.querySelectorAll("button")];
+document.querySelector(".side-mark").onclick=()=>sidebar.classList.toggle("open");
+function revealActive(){slides[index].querySelectorAll(".reveal").forEach((el,i)=>setTimeout(()=>el.classList.add("in","visible"),80+i*55))}
+function go(n){index=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>{s.classList.toggle("active",i===index);if(i!==index)s.querySelectorAll(".reveal").forEach(el=>el.classList.remove("in"))});dotBtns.forEach((d,i)=>d.classList.toggle("active",i===index));sideBtns.forEach((b,i)=>b.classList.toggle("active",i===index));progress.style.width=((index)/(slides.length-1))*100+"%";current.textContent=String(index+1).padStart(2,"0");revealActive()}
+document.getElementById("next").onclick=()=>go(index+1);document.getElementById("prev").onclick=()=>go(index-1);
+window.addEventListener("keydown",e=>{if(["ArrowRight"," ","PageDown"].includes(e.key)){e.preventDefault();go(index+1)}if(["ArrowLeft","PageUp"].includes(e.key)){e.preventDefault();go(index-1)}if(e.key==="Home")go(0);if(e.key==="End")go(slides.length-1)});
+window.addEventListener("touchstart",e=>touchStart=e.changedTouches[0].clientX,{passive:true});window.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-touchStart;if(Math.abs(dx)>45)go(index+(dx<0?1:-1))},{passive:true});
+document.querySelectorAll(".flip").forEach(c=>c.addEventListener("click",()=>c.classList.toggle("flipped")));
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")}),{threshold:.18});document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));revealActive();
+const tw="¿Cómo serán los nuevos vínculos y citas al 2036 en el mundo tecnológico en el que vivimos?";let ti=0;function type(){const el=document.getElementById("typewriter");if(ti<=tw.length){el.textContent=tw.slice(0,ti++);setTimeout(type,45)}}type();
+const dot=document.querySelector(".cursor-dot"),ring=document.querySelector(".cursor-ring");let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;if(matchMedia("(pointer:fine)").matches){addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+"px";dot.style.top=my+"px"});function cur(){rx+=(mx-rx)*.17;ry+=(my-ry)*.17;ring.style.left=rx+"px";ring.style.top=ry+"px";requestAnimationFrame(cur)}cur()}
+const canvas=document.getElementById("particleCanvas"),ctx=canvas.getContext("2d");let pts=[];function resize(){canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+"px";canvas.style.height=innerHeight+"px";ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);pts=Array.from({length:Math.min(72,Math.floor(innerWidth/22))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.32,vy:(Math.random()-.5)*.32}))}addEventListener("resize",resize);resize();
+function particles(){ctx.clearRect(0,0,innerWidth,innerHeight);for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>innerWidth)p.vx*=-1;if(p.y<0||p.y>innerHeight)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,1.3,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,.44)";ctx.fill()}for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const a=pts[i],b=pts[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<132){ctx.strokeStyle=`rgba(155,93,229,${(1-d/132)*.18})`;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}}requestAnimationFrame(particles)}particles();
+</script>
+</body>
+</html>
